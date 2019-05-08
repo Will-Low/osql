@@ -1,0 +1,24 @@
+trigger:
+- stefano/feature/ci
+
+jobs:
+
+# LINUX
+  - job: UbuntuBuild
+
+    pool: 
+      vmImage: Ubuntu-16.04
+
+    steps:
+    - script: make sysprep
+      displayName: "Prepare the system, downloading and installing the necessary"
+
+    - script: make -j3
+      displayName: "Build osql-lts"
+      env: 
+        SKIP_BENCHMARKS: 1
+
+    - script: make test
+      displayName: "Run tests"
+    
+
