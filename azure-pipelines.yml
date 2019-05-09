@@ -4,7 +4,7 @@ trigger:
 jobs:
 
 # LINUX
-  - job: UbuntuBuild
+  - job: Ubuntu1604Build
 
     pool: 
       vmImage: Ubuntu-16.04
@@ -15,7 +15,26 @@ jobs:
 
     - script: make -j3
       displayName: "Build osql-lts"
-      env: 
+      env:
+        SKIP_BENCHMARKS: 1
+
+    - script: make test
+      displayName: "Run tests"
+
+  - job: Ubuntu1404Build
+
+    pool:
+      vmImage: Ubuntu-16.04
+
+    container: trailofbits/osql-lts:ubuntu-14.04
+
+    steps:
+    - script: make sysprep
+      displayName: "Prepare the system, downloading and installing the necessary"
+
+    - script: make -j3
+      displayName: "Build osql-lts"
+      env:
         SKIP_BENCHMARKS: 1
 
     - script: make test
