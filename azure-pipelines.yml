@@ -21,12 +21,33 @@ jobs:
     - script: make test
       displayName: "Run tests"
 
+
   - job: Ubuntu1404Build
 
     pool:
       vmImage: Ubuntu-16.04
 
     container: trailofbits/osql-lts:ubuntu-14.04
+
+    steps:
+      - script: make sysprep
+        displayName: "Prepare the system, downloading and installing the necessary"
+
+      - script: make -j3
+        displayName: "Build osql-lts"
+        env:
+          SKIP_BENCHMARKS: 1
+
+      - script: make test
+        displayName: "Run tests"
+
+
+  - job: CentOS7Build
+
+    pool:
+      vmImage: Ubuntu-16.04
+
+    container: trailofbits/osql-lts:centos-7
 
     steps:
       - script: make sysprep
