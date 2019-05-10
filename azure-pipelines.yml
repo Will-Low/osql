@@ -69,7 +69,7 @@ jobs:
       vmImage: vs2017-win2016
 
     steps:
-      - powershell: (Get-Command 'python' -ErrorAction SilentlyContinue).Source
+      - powershell: (Get-Command 'python2' -ErrorAction SilentlyContinue).Source
       # - powershell: tools\make-win64-dev-env.bat /skip-windows-sdk
       #   displayName: "Prepare the system, downloading and installing the necessary"
 
