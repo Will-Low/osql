@@ -149,11 +149,28 @@ function Test-PythonInstalled {
     return $false
   }
   $out = Start-OsqueryProcess $pythonInstall @('--version')
-  if (($out.exitcode -ne 0) -or (-not ($out.stderr -like $major))) {
+  if (($out.exitcode -ne 0)) {
     $msg = '[-] Python major version != 2.7'
     Write-Host $msg -ForegroundColor Yellow
     return $false
   }
+
+  if ((-not ($out.stderr -like $major)) -and ($version[0] -eq "3")) {
+    # Try again, using the common path where python is normally installed
+    $pythonInstall = (Get-ChildItem -Directory -Path 'C:\python2*').Fullname
+    if ($pythonInstall -eq $null) {
+      $msg = '[-] No Python 2 installations found in C:\'
+      Write-Host $msg -ForegroundColor Yellow
+      return $false
+    }
+    $out = Start-OsqueryProcess $pythonInstall @('--version')
+    if (($out.exitcode -ne 0) -or (-not ($out.stderr -like $major))) {
+      $msg = '[-] Python major version != 2.7'
+      Write-Host $msg -ForegroundColor Yellow
+      return $false
+    }
+  }
+
   # Get the specific version returned
   $version = $out.stderr.Split(" ")
   if ($version.Length -lt 2) {
