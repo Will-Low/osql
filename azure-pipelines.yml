@@ -60,5 +60,28 @@ jobs:
 
       - script: make test
         displayName: "Run tests"
-    
 
+
+  - job: WindowsServer2016
+
+    pool:
+      vmImage: vs2017-win2016
+
+    steps:
+      - script: tools\make-win64-dev-env.bat
+        displayName: "Prepare the system, downloading and installing the necessary"
+
+      - powershell: |
+          mkdir build
+          cd build
+          cmake $(Build.SourcesDirectory) -G "Visual Studio 14 2015 Win64"
+        workingDirectory: $(Build.BinariesDirectory)
+        displayName: "Configure the build"
+
+      - powershell: cmake --build . --config Release
+        workingDirectory: $(Build.BinariesDirectory)/build
+        displayName: "Build osql-lts"
+
+      - powershell: cmake --build . --config Release --target test
+        workingDirectory: $(Build.BinariesDirectory)/build
+        displayName: "Run tests"
