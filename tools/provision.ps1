@@ -14,7 +14,11 @@
     '', `
     Scope = "Function", `
     Target = "*")]
-param()
+param(
+  [Parameter()]
+  [string]
+  $skipSwitch
+)
 
 # URL of where our pre-compiled third-party dependenices are archived
 $THIRD_PARTY_ARCHIVE_URL = 'https://osquery-packages.s3.amazonaws.com/choco'
@@ -459,7 +463,11 @@ function Main {
   $out = Install-ChocoPackage '7zip.commandline'
   $out = Install-ChocoPackage 'vswhere'
   $out = Install-ChocoPackage 'cmake.portable' '3.10.2'
-  $out = Install-ChocoPackage 'windows-sdk-10.0'
+
+  # Do not install Windows SDK if asked, normally used with the CI
+  if ($skipSwitch -ne "/skip-windows-sdk") {
+    $out = Install-ChocoPackage 'windows-sdk-10.0'
+  }
 
   # Only install python if it's not needed
   $pythonInstall = Test-PythonInstalled

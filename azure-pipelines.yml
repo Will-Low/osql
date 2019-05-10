@@ -68,7 +68,7 @@ jobs:
       vmImage: vs2017-win2016
 
     steps:
-      - script: tools\make-win64-dev-env.bat
+      - powershell: tools\make-win64-dev-env.bat /skip-windows-sdk
         displayName: "Prepare the system, downloading and installing the necessary"
 
       - powershell: |
