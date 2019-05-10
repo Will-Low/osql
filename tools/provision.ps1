@@ -138,72 +138,127 @@ function Test-ChocoPackageInstalled {
   return $false
 }
 
-# Helper function to check the version of python installed, as well as
-# return the parent path where Python is installed.
-function Test-PythonInstalled {
-  $major = '*2.7*'
-  $pythonInstall = (Get-Command 'python' -ErrorAction SilentlyContinue).Source
-  if ($pythonInstall -eq $null) {
-    $msg = '[-] Python binary not found in system path'
-    Write-Host $msg -ForegroundColor Yellow
-    return $false
-  }
-  $out = Start-OsqueryProcess $pythonInstall @('--version')
-  if (($out.exitcode -ne 0)) {
-    $msg = '[-] Python major version != 2.7'
-    Write-Host $msg -ForegroundColor Yellow
-    return $false
-  }
-
-  # Get the specific version returned
-  $version = $out.stderr.Split(" ")
-
-  echo $version
-
-  if ((-not ($out.stderr -like $major)) -and ($version[1].Trim()[0] -eq "3")) {
-    # Try again, using the common path where python is normally installed
-    $pythonDir = (Get-ChildItem -Directory -Path 'C:\python2*').FullName
-    if ($pythonDir -eq $null) {
-      $msg = '[-] No Python 2 installations found in C:\'
-      Write-Host $msg -ForegroundColor Yellow
-      return $false
-    }
-
-    $pythonInstall = (Get-ChildItem 'python.exe' -Path $pythonDir).FullName
-    if ($pythonInstall -eq $null) {
-      $msg = '[-] Python binary not found in ' + $pythonDir
-      Write-Host $msg -ForegroundColor Yellow
-      return $false
-    }
-
-    $out = Start-OsqueryProcess $pythonInstall @('--version')
-    if (($out.exitcode -ne 0) -or (-not ($out.stderr -like $major))) {
-      $msg = '[-] Python major version != 2.7'
-      Write-Host $msg -ForegroundColor Yellow
-      return $false
-    }
-  }
+# Helper function to check that the version of python is correct
+function Test-PythonIsCorrectVersion($version) {
 
   if ($version.Length -lt 2) {
-    $msg = '[-] Encountered unknown version of python'
-    Write-Host $msg -ForegroundColor Yellow
     return $false
   }
+
+  if (-not ($version[1] -like '*2.7*')) {
+    return $false
+  }
+
   $minor = $version[1].Trim().Split(".")
   if ($minor.Length -le 2) {
-    $msg = '[-] Encountered unknown version of python'
-    Write-Host $msg -ForegroundColor Yellow
     return $false
   }
+
   # The oldest Python variant we support is 2.7.12
   if ([int]$minor[2] -lt 12) {
     $msg = '[-] Python minor version < 12'
     Write-Host $msg -ForegroundColor Yellow
     return $false
   }
-  # Lastly derive the parent path of the binary, as we use this to
-  # get the pip path also.
-  return (Get-Item $pythonInstall).Directory.Fullname
+}
+
+# Helper function to check if python is installed, as well as
+# return the parent path where Python is installed.
+function Test-PythonInstalled {
+  $searchPythonInstallation = $true
+
+  $pythonBinary = (Get-Command 'python' -ErrorAction SilentlyContinue).Source
+  if ($pythonBinary -ne $null) {
+    $searchPythonInstallation = $false
+
+    $out = Start-OsqueryProcess $pythonBinary @('--version')
+    if (($out.exitcode -ne 0)) {
+      $msg = '[-] Failed to find the version of the python binary'
+      Write-Host $msg -ForegroundColor Yellow
+      return $false
+    }
+
+    # Get the specific version returned
+    $versionStringToParse = $null
+    if ($out.stderr -eq $null) {
+      if ($out.stdout -ne $null) {
+        $versionStringToParse = $out.stdout
+      }
+    }
+    else {
+      $versionStringToParse = $out.stderr
+    }
+
+    $correctVersionFound = $false
+    if ($versionStringToParse -ne $null) {
+      $version = $versionStringToParse.Split(" ")
+
+      $correctVersionFound = Test-PythonIsCorrectVersion $version
+      if ($correctVersionFound) {
+        $pythonRootDir = (Get-Item $pythonBinary).Directory.Fullname
+      }
+    }
+
+    if (-not $correctVersionFound) {
+      # The version is not correct, but we don't fail just now
+      $searchPythonInstallation = $true
+    }
+  }
+
+  # Try searching in C:\
+  if($searchPythonInstallation) {
+    $pythonRootDir = (Get-ChildItem -Directory -Path 'C:\python2*').FullName
+    if ($pythonRootDir -eq $null) {
+      $msg = '[-] No Python 2 installations found in C:\'
+      Write-Host $msg -ForegroundColor Yellow
+      return $false
+    }
+
+    $pythonBinary = (Get-ChildItem 'python.exe' -Path $pythonRootDir).FullName
+    if ($pythonBinary -eq $null) {
+      $msg = '[-] Python binary not found in ' + $pythonRootDir
+      Write-Host $msg -ForegroundColor Yellow
+      return $false
+    }
+
+    $out = Start-OsqueryProcess $pythonBinary @('--version')
+    if (($out.exitcode -ne 0) -or (-not ($out.stderr -like $major))) {
+      $msg = '[-] Failed to find the version of the python binary'
+      Write-Host $msg -ForegroundColor Yellow
+      return $false
+    }
+
+    # Get the specific version returned
+    $versionStringToParse = $null
+    if ($out.stderr -eq $null) {
+      if ($out.stdout -ne $null) {
+        $versionStringToParse = $out.stdout
+      }
+    }
+    else {
+      $versionStringToParse = $out.stderr
+    }
+
+    if ($versionStringToParse -eq $null) {
+      $msg = '[-] Failed to parse the version of the python binary'
+      Write-Host $msg -ForegroundColor Yellow
+      return $false
+    }
+
+    $version = $versionStringToParse.Split(" ")
+
+    if (Test-PythonIsCorrectVersion $version) {
+      $pythonRootDir = (Get-Item $pythonBinary).Directory.Fullname
+    }
+    else {
+      $msg = '[-] Failed to find the correct version of python'
+      Write-Host $msg -ForegroundColor Yellow
+      return $false
+    }
+  }
+
+  # Return the parent path, used also for pip
+  return $pythonRootDir
 }
 
 # Installs the Powershell Analzyer: https://github.com/PowerShell/PSScriptAnalyzer
@@ -498,12 +553,12 @@ function Main {
   }
 
   # Only install python if it's not needed
-  $pythonInstall = Test-PythonInstalled
-  if (-not ($pythonInstall)) {
+  $pythonBinary = Test-PythonInstalled
+  if (-not ($pythonBinary)) {
     Install-ChocoPackage 'python2'
     # Update the system path and re-derive the python install
     $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine")
-    $pythonInstall = Test-PythonInstalled
+    $pythonBinary = Test-PythonInstalled
   }
 
   $out = Install-ChocoPackage 'wixtoolset' '' @('--version', '3.10.3.300701')
@@ -511,7 +566,7 @@ function Main {
   Add-ToSystemPath 'C:\Program Files (x86)\WiX Toolset v3.10\bin'
 
   # Convenience variable for accessing Python
-  [Environment]::SetEnvironmentVariable("OSQUERY_PYTHON_PATH", $pythonInstall, "Machine")
+  [Environment]::SetEnvironmentVariable("OSQUERY_PYTHON_PATH", $pythonBinary, "Machine")
   $out = Install-PipPackage
   $out = Update-GitSubmodule
   if (Test-Path env:OSQUERY_BUILD_HOST) {
