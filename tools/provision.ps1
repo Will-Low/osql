@@ -158,6 +158,8 @@ function Test-PythonInstalled {
   # Get the specific version returned
   $version = $out.stderr.Split(" ")
 
+  echo $version
+
   if ((-not ($out.stderr -like $major)) -and ($version[1].Trim()[0] -eq "3")) {
     # Try again, using the common path where python is normally installed
     $pythonDir = (Get-ChildItem -Directory -Path 'C:\python2*').FullName
