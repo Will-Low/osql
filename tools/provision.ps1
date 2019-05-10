@@ -16,8 +16,8 @@
     Target = "*")]
 param(
   [Parameter()]
-  [string]
-  $skipSwitch
+  [string[]]
+  $skip
 )
 
 # URL of where our pre-compiled third-party dependenices are archived
@@ -465,7 +465,7 @@ function Main {
   $out = Install-ChocoPackage 'cmake.portable' '3.10.2'
 
   # Do not install Windows SDK if asked, normally used with the CI
-  if ($skipSwitch -ne "/skip-windows-sdk") {
+  if ($skip.Contains("windows-sdk")) {
     $out = Install-ChocoPackage 'windows-sdk-10.0'
   }
 
