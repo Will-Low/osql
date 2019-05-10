@@ -141,26 +141,18 @@ function Test-ChocoPackageInstalled {
 # Helper function to check that the version of python is correct
 function Test-PythonIsCorrectVersion($version) {
 
-  Write-Host "test " + $version
-
   if ($version.Length -lt 2) {
     return $false
   }
-
-  Write-Host "test"
 
   if (-not ($version[1] -like '*2.7*')) {
     return $false
   }
 
-  Write-Host "test1"
-
   $minor = $version[1].Trim().Split(".")
   if ($minor.Length -le 2) {
     return $false
   }
-
-  Write-Host "test2"
 
   # The oldest Python variant we support is 2.7.12
   if ([int]$minor[2] -lt 12) {
@@ -168,8 +160,6 @@ function Test-PythonIsCorrectVersion($version) {
     Write-Host $msg -ForegroundColor Yellow
     return $false
   }
-
-  Write-Host "test3"
 
   return $true
 }
@@ -213,7 +203,7 @@ function Test-PythonInstalled {
     }
   }
 
-  Write-Host "Failed to find suitable python version in the system PATH, searching in C:\"
+  Write-Host " => Failed to find suitable python version in the system PATH, searching in C:\" -foregroundcolor Cyan
 
   # Try searching in C:\
   if($searchPythonInstallation) {
@@ -238,8 +228,6 @@ function Test-PythonInstalled {
       return $false
     }
 
-    Write-Host $out -ForegroundColor Yellow
-
     # Get the specific version returned
     $versionStringToParse = $null
     if ($out.stderr -eq $null) {
@@ -258,8 +246,6 @@ function Test-PythonInstalled {
     }
 
     $version = $versionStringToParse.Split(" ")
-
-    Write-Host $version
 
     if (Test-PythonIsCorrectVersion $version) {
       $pythonRootDir = (Get-Item $pythonBinary).Directory.Fullname
@@ -449,7 +435,7 @@ function Install-ThirdParty {
     "aws-sdk-cpp.1.4.55",
     "boost-msvc14.1.66.0-r1",
     "bzip2.1.0.6",
-    "doxygen.1.8.11",
+    "doxygen.1.8.15",
     "gflags-dev.2.2.1",
     "glog.0.3.5",
     "libarchive.3.3.1-r1",
