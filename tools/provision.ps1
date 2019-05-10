@@ -141,18 +141,26 @@ function Test-ChocoPackageInstalled {
 # Helper function to check that the version of python is correct
 function Test-PythonIsCorrectVersion($version) {
 
+  Write-Host "test " + $version
+
   if ($version.Length -lt 2) {
     return $false
   }
+
+  Write-Host "test"
 
   if (-not ($version[1] -like '*2.7*')) {
     return $false
   }
 
+  Write-Host "test1"
+
   $minor = $version[1].Trim().Split(".")
   if ($minor.Length -le 2) {
     return $false
   }
+
+  Write-Host "test2"
 
   # The oldest Python variant we support is 2.7.12
   if ([int]$minor[2] -lt 12) {
@@ -160,6 +168,10 @@ function Test-PythonIsCorrectVersion($version) {
     Write-Host $msg -ForegroundColor Yellow
     return $false
   }
+
+  Write-Host "test3"
+
+  return $true
 }
 
 # Helper function to check if python is installed, as well as
@@ -172,21 +184,17 @@ function Test-PythonInstalled {
     $searchPythonInstallation = $false
 
     $out = Start-OsqueryProcess $pythonBinary @('--version')
-    if (($out.exitcode -ne 0)) {
-      $msg = '[-] Failed to find the version of the python binary'
-      Write-Host $msg -ForegroundColor Yellow
-      return $false
-    }
-
-    # Get the specific version returned
-    $versionStringToParse = $null
-    if ($out.stderr -eq $null) {
-      if ($out.stdout -ne $null) {
-        $versionStringToParse = $out.stdout
+    if (($out.exitcode -eq 0)) {
+      # Get the specific version returned
+      $versionStringToParse = $null
+      if ($out.stderr -eq $null) {
+        if ($out.stdout -ne $null) {
+          $versionStringToParse = $out.stdout
+        }
       }
-    }
-    else {
-      $versionStringToParse = $out.stderr
+      else {
+        $versionStringToParse = $out.stderr
+      }
     }
 
     $correctVersionFound = $false
@@ -205,6 +213,8 @@ function Test-PythonInstalled {
     }
   }
 
+  Write-Host "Failed to find suitable python version in the system PATH, searching in C:\"
+
   # Try searching in C:\
   if($searchPythonInstallation) {
     $pythonRootDir = (Get-ChildItem -Directory -Path 'C:\python2*').FullName
@@ -222,11 +232,13 @@ function Test-PythonInstalled {
     }
 
     $out = Start-OsqueryProcess $pythonBinary @('--version')
-    if (($out.exitcode -ne 0) -or (-not ($out.stderr -like $major))) {
+    if (($out.exitcode -ne 0)) {
       $msg = '[-] Failed to find the version of the python binary'
       Write-Host $msg -ForegroundColor Yellow
       return $false
     }
+
+    Write-Host $out -ForegroundColor Yellow
 
     # Get the specific version returned
     $versionStringToParse = $null
@@ -246,6 +258,8 @@ function Test-PythonInstalled {
     }
 
     $version = $versionStringToParse.Split(" ")
+
+    Write-Host $version
 
     if (Test-PythonIsCorrectVersion $version) {
       $pythonRootDir = (Get-Item $pythonBinary).Directory.Fullname
