@@ -548,7 +548,7 @@ function Main {
   $out = Install-ChocoPackage 'cmake.portable' '3.10.2'
 
   # Do not install Windows SDK if asked, normally used with the CI
-  if (-not $skip.Contains("windows-sdk")) {
+  if ($skip -ne $null -and -not $skip.Contains("windows-sdk")) {
     $out = Install-ChocoPackage 'windows-sdk-10.0'
   }
 
