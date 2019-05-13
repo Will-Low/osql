@@ -435,7 +435,6 @@ function Install-ThirdParty {
     "aws-sdk-cpp.1.4.55",
     "boost-msvc14.1.66.0-r1",
     "bzip2.1.0.6",
-    "doxygen.1.8.15",
     "gflags-dev.2.2.1",
     "glog.0.3.5",
     "libarchive.3.3.1-r1",
@@ -553,6 +552,7 @@ function Main {
   }
 
   # Only install python if it's not needed
+  Write-Host "=> Determining whether Python 2 is already installed..." -foregroundcolor DarkYellow
   $pythonBinary = Test-PythonInstalled
   if (-not ($pythonBinary)) {
     Install-ChocoPackage 'python2'
@@ -593,6 +593,9 @@ function Main {
       $out = Install-PowershellLinter
     }
   }
+
+  $out = Install-ChocoPackage 'doxygen.install'
+
   $out = Install-ThirdParty
   Write-Host "[+] Done." -foregroundcolor Yellow
 }
