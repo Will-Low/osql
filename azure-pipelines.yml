@@ -76,7 +76,7 @@ jobs:
           mkdir build
           cd build
           call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Enterprise\\VC\\Auxiliary\\Build\\vcvars64.bat"
-          cmake $(Build.SourcesDirectory) -G "Visual Studio 15 2017 Win64" -T v141
+          cmake $(Build.SourcesDirectory) -G "Visual Studio 15 2017 Win64" -T v141,host=x64
         workingDirectory: $(Build.BinariesDirectory)
         displayName: "Configure the build"
 
