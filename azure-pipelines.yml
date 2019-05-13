@@ -72,17 +72,22 @@ jobs:
       - powershell: tools\make-win64-dev-env.bat -skip windows-sdk
         displayName: "Prepare the system, downloading and installing the necessary"
 
-      - powershell: |
+      - script: |
           mkdir build
           cd build
-          cmake $(Build.SourcesDirectory) -G "Visual Studio 15 2017 Win64"
+          call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Enterprise\\VC\\Auxiliary\\Build\\vcvars64.bat"
+          cmake $(Build.SourcesDirectory) -G "Visual Studio 15 2017 Win64" -T v141
         workingDirectory: $(Build.BinariesDirectory)
         displayName: "Configure the build"
 
-      - powershell: cmake --build . --config Release
+      - script: |
+          call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Enterprise\\VC\\Auxiliary\\Build\\vcvars64.bat"
+          cmake --build . --config Release
         workingDirectory: $(Build.BinariesDirectory)/build
         displayName: "Build osql-lts"
 
-      - powershell: cmake --build . --config Release --target test
+      - script: |
+          call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Enterprise\\VC\\Auxiliary\\Build\\vcvars64.bat"
+          cmake --build . --config Release --target test
         workingDirectory: $(Build.BinariesDirectory)/build
         displayName: "Run tests"
