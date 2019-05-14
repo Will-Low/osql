@@ -170,7 +170,6 @@ function Test-PythonInstalled {
   $searchPythonInstallation = $true
 
   $pythonBinary = (Get-Command 'python' -ErrorAction SilentlyContinue).Source
-  Write-Host 'python in PATH: ' + $pythonBinary -foregroundcolor DarkYellow
   if ($pythonBinary -ne $null) {
     $searchPythonInstallation = $false
 
@@ -204,10 +203,9 @@ function Test-PythonInstalled {
     }
   }
 
-  Write-Host " => Failed to find suitable python version in the system PATH, searching in C:\" -foregroundcolor Cyan
-
   # Try searching in C:\
   if($searchPythonInstallation) {
+    Write-Host " => Failed to find suitable python version in the system PATH, searching in C:\" -foregroundcolor Cyan
     $pythonRootDir = (Get-ChildItem -Directory -Path 'C:\python2*').FullName
     if ($pythonRootDir -eq $null) {
       $msg = '[-] No Python 2 installations found in C:\'
@@ -257,8 +255,6 @@ function Test-PythonInstalled {
       return $false
     }
   }
-
-  Write-Host 'Python found at: ' + $pythonRootDir -foregroundcolor DarkYellow
 
   # Return the parent path, used also for pip
   return $pythonRootDir
