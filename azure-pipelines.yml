@@ -73,8 +73,10 @@ jobs:
         displayName: "Prepare the system, downloading and installing the necessary"
 
       - powershell: |
-          echo $env:PATH
-          ls -l C:\Python27amd64\Lib\site-packages
+          echo $env:OSQUERY_PYTHON_PATH
+          echo $env:PYTHONHOME
+        env:
+          PYTHONHOME: $(OSQUERY_PYTHON_PATH)
 
       # - script: |
       #     mkdir build
