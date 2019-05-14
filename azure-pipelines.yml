@@ -69,14 +69,18 @@ jobs:
       vmImage: vs2017-win2016
 
     steps:
+
+      - task: UsePythonVersion@0
+        inputs:
+          versionSpec: '2.7'
+          addToPath: true
+          architecture: 'x64'
+
       - powershell: tools\make-win64-dev-env.bat -skip windows-sdk
         displayName: "Prepare the system, downloading and installing the necessary"
 
       - powershell: |
-          echo $env:OSQUERY_PYTHON_PATH
-          echo $env:PYTHONHOME
-        env:
-          PYTHONHOME: $(OSQUERY_PYTHON_PATH)
+          python -c "import jinja2; print 'test'"
 
       # - script: |
       #     mkdir build
