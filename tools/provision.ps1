@@ -170,6 +170,7 @@ function Test-PythonInstalled {
   $searchPythonInstallation = $true
 
   $pythonBinary = (Get-Command 'python' -ErrorAction SilentlyContinue).Source
+  Write-Host 'python in PATH: ' + $pythonBinary -foregroundcolor DarkYellow
   if ($pythonBinary -ne $null) {
     $searchPythonInstallation = $false
 
