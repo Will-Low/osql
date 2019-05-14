@@ -88,6 +88,7 @@ jobs:
         displayName: "Configure the build"
         env:
           SKIP_BENCHMARKS: 1
+          OSQUERY_BUILD_VERSION: 3.3.2
 
       - script: |
           call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Enterprise\\VC\\Auxiliary\\Build\\vcvars64.bat"
