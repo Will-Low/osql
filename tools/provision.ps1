@@ -257,6 +257,8 @@ function Test-PythonInstalled {
     }
   }
 
+  Write-Host 'Python found at: ' + $pythonRootDir -foregroundcolor DarkYellow
+
   # Return the parent path, used also for pip
   return $pythonRootDir
 }
