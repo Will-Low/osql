@@ -72,24 +72,28 @@ jobs:
       - powershell: tools\make-win64-dev-env.bat -skip windows-sdk
         displayName: "Prepare the system, downloading and installing the necessary"
 
-      - script: |
-          mkdir build
-          cd build
-          call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Enterprise\\VC\\Auxiliary\\Build\\vcvars64.bat"
-          cmake $(Build.SourcesDirectory) -G "Visual Studio 15 2017 Win64" -T v141,host=x64
-        workingDirectory: $(Build.BinariesDirectory)
-        displayName: "Configure the build"
-        env:
-          SKIP_BENCHMARKS: 1
+      - powershell: |
+          echo $env:PATH
+          ls -l C:\Python27amd64\Lib\site-packages
 
-      - script: |
-          call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Enterprise\\VC\\Auxiliary\\Build\\vcvars64.bat"
-          cmake --build . --config Release
-        workingDirectory: $(Build.BinariesDirectory)/build
-        displayName: "Build osql-lts"
+      # - script: |
+      #     mkdir build
+      #     cd build
+      #     call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Enterprise\\VC\\Auxiliary\\Build\\vcvars64.bat"
+      #     cmake $(Build.SourcesDirectory) -G "Visual Studio 15 2017 Win64" -T v141,host=x64
+      #   workingDirectory: $(Build.BinariesDirectory)
+      #   displayName: "Configure the build"
+      #   env:
+      #     SKIP_BENCHMARKS: 1
 
-      - script: |
-          call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Enterprise\\VC\\Auxiliary\\Build\\vcvars64.bat"
-          cmake --build . --config Release --target test
-        workingDirectory: $(Build.BinariesDirectory)/build
-        displayName: "Run tests"
+      # - script: |
+      #     call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Enterprise\\VC\\Auxiliary\\Build\\vcvars64.bat"
+      #     cmake --build . --config Release
+      #   workingDirectory: $(Build.BinariesDirectory)/build
+      #   displayName: "Build osql-lts"
+
+      # - script: |
+      #     call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Enterprise\\VC\\Auxiliary\\Build\\vcvars64.bat"
+      #     cmake --build . --config Release --target test
+      #   workingDirectory: $(Build.BinariesDirectory)/build
+      #   displayName: "Run tests"
