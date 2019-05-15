@@ -98,6 +98,6 @@ jobs:
 
       - script: |
           call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Enterprise\\VC\\Auxiliary\\Build\\vcvars64.bat"
-          cmake --build . --config Release --target test
+          cmake --build . --config Release --target run_tests
         workingDirectory: $(Build.BinariesDirectory)/build
         displayName: "Run tests"
