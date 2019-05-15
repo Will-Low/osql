@@ -15,6 +15,8 @@ function setup_brew() {
   BREW_TYPE="$2"
   ACTION="$3"
 
+  log "setup_brew: $DEPS $BREW_TYPE $ACTION $HOMEBREW_NO_AUTO_UPDATE"
+
   if [[ "$BREW_TYPE" == "linux" ]]; then
     BREW_REPO=$LINUXBREW_REPO
     BREW_COMMIT=$LINUXBREW_BREW
