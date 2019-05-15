@@ -3,63 +3,69 @@ trigger:
 
 jobs:
 
-# # LINUX
-#   - job: Ubuntu1604Build
+# LINUX
+  - job: Ubuntu1604Build
 
-#     pool: 
-#       vmImage: Ubuntu-16.04
+    pool: 
+      vmImage: Ubuntu-16.04
 
-#     steps:
-#     - script: make sysprep
-#       displayName: "Prepare the system, downloading and installing the necessary"
+    steps:
+    - script: make sysprep
+      displayName: "Prepare the system, downloading and installing the necessary"
 
-#     - script: make -j3
-#       displayName: "Build osql-lts"
-#       env:
-#         SKIP_BENCHMARKS: 1
+    - script: make -j3
+      displayName: "Build osql-lts"
+      env:
+        SKIP_BENCHMARKS: 1
 
-#     - script: make test
-#       displayName: "Run tests"
-
-
-#   - job: Ubuntu1404Build
-
-#     pool:
-#       vmImage: Ubuntu-16.04
-
-#     container: trailofbits/osql-lts:ubuntu-14.04
-
-#     steps:
-#       - script: make sysprep
-#         displayName: "Prepare the system, downloading and installing the necessary"
-
-#       - script: make -j3
-#         displayName: "Build osql-lts"
-#         env:
-#           SKIP_BENCHMARKS: 1
-
-#       - script: make test
-#         displayName: "Run tests"
+    - script: ctest --build-nocmake -V
+      displayName: "Run tests"
+      env:
+        GTEST_COLOR: 1
 
 
-#   - job: CentOS7Build
+  - job: Ubuntu1404Build
 
-#     pool:
-#       vmImage: Ubuntu-16.04
+    pool:
+      vmImage: Ubuntu-16.04
 
-#     container: trailofbits/osql-lts:centos-7
+    container: trailofbits/osql-lts:ubuntu-14.04
 
-#     steps:
-#       - script: make sysprep
-#         displayName: "Prepare the system, downloading and installing the necessary"
+    steps:
+      - script: make sysprep
+        displayName: "Prepare the system, downloading and installing the necessary"
 
-#       - script: make -j3
-#         displayName: "Build osql-lts"
-#         env:
-#           SKIP_BENCHMARKS: 1
+      - script: make -j3
+        displayName: "Build osql-lts"
+        env:
+          SKIP_BENCHMARKS: 1
 
-#       - script: make test
-#         displayName: "Run tests"
+      - script: ctest --build-nocmake -V
+        displayName: "Run tests"
+        env:
+          GTEST_COLOR: 1
+
+
+  - job: CentOS7Build
+
+    pool:
+      vmImage: Ubuntu-16.04
+
+    container: trailofbits/osql-lts:centos-7
+
+    steps:
+      - script: make sysprep
+        displayName: "Prepare the system, downloading and installing the necessary"
+
+      - script: make -j3
+        displayName: "Build osql-lts"
+        env:
+          SKIP_BENCHMARKS: 1
+
+      - script: ctest --build-nocmake -V
+        displayName: "Run tests"
+        env:
+          GTEST_COLOR: 1
 
 
 # WINDOWS
@@ -98,6 +104,6 @@ jobs:
 
       - script: |
           call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Enterprise\\VC\\Auxiliary\\Build\\vcvars64.bat"
-          cmake --build . --config Release --target run_tests
+          ctest --build-nocmake -C Release -V
         workingDirectory: $(Build.BinariesDirectory)/build
         displayName: "Run tests"
