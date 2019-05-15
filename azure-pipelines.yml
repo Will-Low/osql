@@ -14,7 +14,7 @@ jobs:
       displayName: "Prepare the system, downloading and installing the necessary"
 
     - script: make -j3
-      displayName: "Build osql-lts"
+      displayName: "Build osql"
       env:
         SKIP_BENCHMARKS: 1
 
@@ -37,7 +37,7 @@ jobs:
         displayName: "Prepare the system, downloading and installing the necessary"
 
       - script: make -j3
-        displayName: "Build osql-lts"
+        displayName: "Build osql"
         env:
           SKIP_BENCHMARKS: 1
 
@@ -60,7 +60,7 @@ jobs:
         displayName: "Prepare the system, downloading and installing the necessary"
 
       - script: make -j3
-        displayName: "Build osql-lts"
+        displayName: "Build osql"
         env:
           SKIP_BENCHMARKS: 1
 
@@ -103,10 +103,31 @@ jobs:
           call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Enterprise\\VC\\Auxiliary\\Build\\vcvars64.bat"
           cmake --build . --config Release
         workingDirectory: $(Build.BinariesDirectory)/build
-        displayName: "Build osql-lts"
+        displayName: "Build osql"
 
       - script: |
           call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Enterprise\\VC\\Auxiliary\\Build\\vcvars64.bat"
           ctest --build-nocmake -C Release -V
         displayName: "Run tests"
         workingDirectory: $(Build.BinariesDirectory)/build
+
+# MACOS
+  - job: macOS1013Build
+
+    pool:
+      vmImage: macos-10.13
+
+    steps:
+      - script: make sysprep
+        displayName: "Prepare the system, downloading and installing the necessary"
+
+      - script: make -j3
+        displayName: "Build osql"
+        env:
+          SKIP_BENCHMARKS: 1
+
+      - script: /usr/local/osquery/bin/ctest --build-nocmake -V
+        displayName: "Run tests"
+        workingDirectory: $(Build.SourcesDirectory)/build/darwin
+        env:
+          GTEST_COLOR: 1
