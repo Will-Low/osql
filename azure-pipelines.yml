@@ -20,6 +20,7 @@ jobs:
 
     - script: ctest --build-nocmake -V
       displayName: "Run tests"
+      workingDirectory: $(Build.SourcesDirectory)/build/linux
       env:
         GTEST_COLOR: 1
 
@@ -42,6 +43,7 @@ jobs:
 
       - script: ctest --build-nocmake -V
         displayName: "Run tests"
+        workingDirectory: $(Build.SourcesDirectory)/build/linux
         env:
           GTEST_COLOR: 1
 
@@ -64,6 +66,7 @@ jobs:
 
       - script: ctest --build-nocmake -V
         displayName: "Run tests"
+        workingDirectory: $(Build.SourcesDirectory)/build/linux
         env:
           GTEST_COLOR: 1
 
@@ -90,8 +93,8 @@ jobs:
           cd build
           call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Enterprise\\VC\\Auxiliary\\Build\\vcvars64.bat"
           cmake $(Build.SourcesDirectory) -G "Visual Studio 15 2017 Win64" -T v141,host=x64
-        workingDirectory: $(Build.BinariesDirectory)
         displayName: "Configure the build"
+        workingDirectory: $(Build.BinariesDirectory)
         env:
           SKIP_BENCHMARKS: 1
           OSQUERY_BUILD_VERSION: 3.3.2
@@ -105,5 +108,5 @@ jobs:
       - script: |
           call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Enterprise\\VC\\Auxiliary\\Build\\vcvars64.bat"
           ctest --build-nocmake -C Release -V
-        workingDirectory: $(Build.BinariesDirectory)/build
         displayName: "Run tests"
+        workingDirectory: $(Build.BinariesDirectory)/build
