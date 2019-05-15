@@ -18,7 +18,7 @@ jobs:
       env:
         SKIP_BENCHMARKS: 1
 
-    - script: ctest --build-nocmake -V
+    - script: /usr/local/osquery/bin/ctest --build-nocmake -V
       displayName: "Run tests"
       workingDirectory: $(Build.SourcesDirectory)/build/linux
       env:
@@ -41,7 +41,7 @@ jobs:
         env:
           SKIP_BENCHMARKS: 1
 
-      - script: ctest --build-nocmake -V
+      - script: /usr/local/osquery/bin/ctest --build-nocmake -V
         displayName: "Run tests"
         workingDirectory: $(Build.SourcesDirectory)/build/linux
         env:
@@ -64,7 +64,7 @@ jobs:
         env:
           SKIP_BENCHMARKS: 1
 
-      - script: ctest --build-nocmake -V
+      - script: /usr/local/osquery/bin/ctest --build-nocmake -V
         displayName: "Run tests"
         workingDirectory: $(Build.SourcesDirectory)/build/linux
         env:
@@ -72,7 +72,7 @@ jobs:
 
 
 # WINDOWS
-  - job: WindowsServer2016
+  - job: WindowsServer2016Build
 
     pool:
       vmImage: vs2017-win2016
