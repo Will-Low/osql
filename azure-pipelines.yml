@@ -145,12 +145,6 @@ jobs:
         env:
           OSQUERY_BUILD_HOST: 1
 
-      - task: UsePythonVersion@0
-        inputs:
-          versionSpec: '2.7'
-          addToPath: true
-          architecture: 'x64'
-
       - script: |
           mkdir build
           cd build
