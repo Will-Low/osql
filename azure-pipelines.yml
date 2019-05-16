@@ -3,94 +3,158 @@ trigger:
 
 jobs:
 
-# LINUX
-  - job: Ubuntu1604Build
+# # LINUX
+#   - job: Ubuntu1604Build
+
+#     pool:
+#       vmImage: Ubuntu-16.04
+
+#     steps:
+#     - script: make sysprep
+#       displayName: "Prepare the system, downloading and installing the necessary"
+
+#     - script: make -j3
+#       displayName: "Build osql"
+#       env:
+#         SKIP_BENCHMARKS: 1
+
+#     - script: /usr/local/osquery/bin/ctest --build-nocmake -V
+#       displayName: "Run tests"
+#       workingDirectory: $(Build.SourcesDirectory)/build/linux
+#       env:
+#         GTEST_COLOR: 1
+
+
+#   - job: Ubuntu1404Build
+
+#     pool:
+#       vmImage: Ubuntu-16.04
+
+#     container: trailofbits/osql-lts:ubuntu-14.04
+
+#     steps:
+#       - script: make sysprep
+#         displayName: "Prepare the system, downloading and installing the necessary"
+
+#       - script: make -j3
+#         displayName: "Build osql"
+#         env:
+#           SKIP_BENCHMARKS: 1
+
+#       - script: /usr/local/osquery/bin/ctest --build-nocmake -V
+#         displayName: "Run tests"
+#         workingDirectory: $(Build.SourcesDirectory)/build/linux
+#         env:
+#           GTEST_COLOR: 1
+
+
+#   - job: CentOS7Build
+
+#     pool:
+#       vmImage: Ubuntu-16.04
+
+#     container: trailofbits/osql-lts:centos-7
+
+#     steps:
+#       - script: make sysprep
+#         displayName: "Prepare the system, downloading and installing the necessary"
+
+#       - script: make -j3
+#         displayName: "Build osql"
+#         env:
+#           SKIP_BENCHMARKS: 1
+
+#       - script: /usr/local/osquery/bin/ctest --build-nocmake -V
+#         displayName: "Run tests"
+#         workingDirectory: $(Build.SourcesDirectory)/build/linux
+#         env:
+#           GTEST_COLOR: 1
+
+
+# # WINDOWS
+#   - job: WindowsServer2016Build
+
+#     pool:
+#       vmImage: vs2017-win2016
+
+#     steps:
+#       - task: UsePythonVersion@0
+#         inputs:
+#           versionSpec: '2.7'
+#           addToPath: true
+#           architecture: 'x64'
+
+#       - script: tools\make-win64-dev-env.bat -skip windows-sdk
+#         displayName: "Prepare the system, downloading and installing the necessary"
+
+#       - script: |
+#           mkdir build
+#           cd build
+#           call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Enterprise\\VC\\Auxiliary\\Build\\vcvars64.bat"
+#           cmake $(Build.SourcesDirectory) -G "Visual Studio 15 2017 Win64" -T v141,host=x64
+#         displayName: "Configure the build"
+#         workingDirectory: $(Build.BinariesDirectory)
+#         env:
+#           SKIP_BENCHMARKS: 1
+#           OSQUERY_BUILD_VERSION: 3.3.2
+
+#       - script: |
+#           call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Enterprise\\VC\\Auxiliary\\Build\\vcvars64.bat"
+#           cmake --build . --config Release
+#         workingDirectory: $(Build.BinariesDirectory)/build
+#         displayName: "Build osql"
+
+#       - script: |
+#           call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Enterprise\\VC\\Auxiliary\\Build\\vcvars64.bat"
+#           ctest --build-nocmake -C Release -V
+#         displayName: "Run tests"
+#         workingDirectory: $(Build.BinariesDirectory)/build
+
+# # MACOS
+#   - job: macOS1013Build
+
+#     pool:
+#       vmImage: macos-10.13
+
+#     steps:
+#       - script: |
+#           unset HOMEBREW_NO_AUTO_UPDATE
+#           make sysprep
+#         displayName: "Prepare the system, downloading and installing the necessary"
+
+#       - script: make -j3
+#         displayName: "Build osql"
+#         env:
+#           SKIP_BENCHMARKS: 1
+
+#       - script: /usr/local/osquery/bin/ctest --build-nocmake -V
+#         displayName: "Run tests"
+#         workingDirectory: $(Build.SourcesDirectory)/build/darwin
+#         env:
+#           GTEST_COLOR: 1
+
+  - job: Windows10Build
 
     pool:
-      vmImage: Ubuntu-16.04
+      name: "Self-Hosted Windows 10"
 
     steps:
-    - script: make sysprep
-      displayName: "Prepare the system, downloading and installing the necessary"
 
-    - script: make -j3
-      displayName: "Build osql"
-      env:
-        SKIP_BENCHMARKS: 1
-
-    - script: /usr/local/osquery/bin/ctest --build-nocmake -V
-      displayName: "Run tests"
-      workingDirectory: $(Build.SourcesDirectory)/build/linux
-      env:
-        GTEST_COLOR: 1
-
-
-  - job: Ubuntu1404Build
-
-    pool:
-      vmImage: Ubuntu-16.04
-
-    container: trailofbits/osql-lts:ubuntu-14.04
-
-    steps:
-      - script: make sysprep
+      - script: tools\make-win64-dev-env.bat -skip windows-sdk
         displayName: "Prepare the system, downloading and installing the necessary"
-
-      - script: make -j3
-        displayName: "Build osql"
         env:
-          SKIP_BENCHMARKS: 1
+          OSQUERY_BUILD_HOST: 1
 
-      - script: /usr/local/osquery/bin/ctest --build-nocmake -V
-        displayName: "Run tests"
-        workingDirectory: $(Build.SourcesDirectory)/build/linux
-        env:
-          GTEST_COLOR: 1
-
-
-  - job: CentOS7Build
-
-    pool:
-      vmImage: Ubuntu-16.04
-
-    container: trailofbits/osql-lts:centos-7
-
-    steps:
-      - script: make sysprep
-        displayName: "Prepare the system, downloading and installing the necessary"
-
-      - script: make -j3
-        displayName: "Build osql"
-        env:
-          SKIP_BENCHMARKS: 1
-
-      - script: /usr/local/osquery/bin/ctest --build-nocmake -V
-        displayName: "Run tests"
-        workingDirectory: $(Build.SourcesDirectory)/build/linux
-        env:
-          GTEST_COLOR: 1
-
-
-# WINDOWS
-  - job: WindowsServer2016Build
-
-    pool:
-      vmImage: vs2017-win2016
-
-    steps:
       - task: UsePythonVersion@0
         inputs:
           versionSpec: '2.7'
           addToPath: true
           architecture: 'x64'
 
-      - script: tools\make-win64-dev-env.bat -skip windows-sdk
-        displayName: "Prepare the system, downloading and installing the necessary"
-
       - script: |
           mkdir build
           cd build
-          call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Enterprise\\VC\\Auxiliary\\Build\\vcvars64.bat"
+          call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\BuildTools\\VC\\Auxiliary\\Build\\vcvars64.bat"
           cmake $(Build.SourcesDirectory) -G "Visual Studio 15 2017 Win64" -T v141,host=x64
         displayName: "Configure the build"
         workingDirectory: $(Build.BinariesDirectory)
@@ -99,36 +163,13 @@ jobs:
           OSQUERY_BUILD_VERSION: 3.3.2
 
       - script: |
-          call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Enterprise\\VC\\Auxiliary\\Build\\vcvars64.bat"
+          call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\BuildTools\\VC\\Auxiliary\\Build\\vcvars64.bat"
           cmake --build . --config Release
         workingDirectory: $(Build.BinariesDirectory)/build
         displayName: "Build osql"
 
       - script: |
-          call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Enterprise\\VC\\Auxiliary\\Build\\vcvars64.bat"
+          call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\BuildTools\\VC\\Auxiliary\\Build\\vcvars64.bat"
           ctest --build-nocmake -C Release -V
         displayName: "Run tests"
         workingDirectory: $(Build.BinariesDirectory)/build
-
-# MACOS
-  - job: macOS1013Build
-
-    pool:
-      vmImage: macos-10.13
-
-    steps:
-      - script: |
-          unset HOMEBREW_NO_AUTO_UPDATE
-          make sysprep
-        displayName: "Prepare the system, downloading and installing the necessary"
-
-      - script: make -j3
-        displayName: "Build osql"
-        env:
-          SKIP_BENCHMARKS: 1
-
-      - script: /usr/local/osquery/bin/ctest --build-nocmake -V
-        displayName: "Run tests"
-        workingDirectory: $(Build.SourcesDirectory)/build/darwin
-        env:
-          GTEST_COLOR: 1
