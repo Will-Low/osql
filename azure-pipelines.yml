@@ -138,6 +138,9 @@ jobs:
     pool:
       name: "Self-Hosted Windows 10"
 
+    workspace:
+      clean: all
+
     steps:
 
       - script: tools\make-win64-dev-env.bat -skip windows-sdk
