@@ -149,11 +149,10 @@ jobs:
           OSQUERY_BUILD_HOST: 1
 
       - script: |
-          @RD /S /Q "build"
           mkdir build
           cd build
           call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\BuildTools\\VC\\Auxiliary\\Build\\vcvars64.bat"
-          cmake $(Build.SourcesDirectory) -G "Visual Studio 15 2017 Win64" -T v141,host=x64 -- /m:3
+          cmake $(Build.SourcesDirectory) -G "Visual Studio 15 2017 Win64" -T v141,host=x64
         displayName: "Configure the build"
         workingDirectory: $(Build.BinariesDirectory)
         env:
@@ -162,7 +161,7 @@ jobs:
 
       - script: |
           call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\BuildTools\\VC\\Auxiliary\\Build\\vcvars64.bat"
-          cmake --build . --config Release
+          cmake --build . --config Release -- /m:3
         workingDirectory: $(Build.BinariesDirectory)/build
         displayName: "Build osql"
 
