@@ -70,6 +70,28 @@ jobs:
 #         env:
 #           GTEST_COLOR: 1
 
+  - job: CentOS6Build
+
+    pool:
+      vmImage: Ubuntu-16.04
+
+    container: trailofbits/osql:centos-6
+
+    steps:
+      - script: make sysprep
+        displayName: "Prepare the system, downloading and installing the necessary"
+
+      - script: make -j3
+        displayName: "Build osql"
+        env:
+          SKIP_BENCHMARKS: 1
+
+      - script: /usr/local/osquery/bin/ctest --build-nocmake -V
+        displayName: "Run tests"
+        workingDirectory: $(Build.SourcesDirectory)/build/linux
+        env:
+          GTEST_COLOR: 1
+
 
 # # WINDOWS
 #   - job: WindowsServer2016Build
@@ -134,6 +156,8 @@ jobs:
 #           GTEST_COLOR: 1
 
   - job: Windows10Build
+
+    timeoutInMinutes: 120
 
     pool:
       name: "Self-Hosted Windows 10"
