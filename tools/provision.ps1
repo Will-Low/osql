@@ -569,7 +569,7 @@ function Main {
   $out = Install-PipPackage
   $out = Update-GitSubmodule
   if (Test-Path env:OSQUERY_BUILD_HOST) {
-    $out = Install-ChocoPackage 'visualcppbuildtools'
+    $out = Install-ChocoPackage 'visualstudio2017-workload-vctools'
   } else {
 	$vsinfo = Get-VSInfo
 	# Install visual studio 2017 if no vs installation is found
